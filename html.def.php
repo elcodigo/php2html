@@ -8,7 +8,7 @@
  * @version    1.0 BETA
  * @author MANUEL GONZALEZ RIVERA <phptohtml@gmail.com>
  * @copyright Copyright (R) 2012, MANUEL GONZALEZ RIVERA <phptohtml@gmail.com>
- * @license http://opensource.org/licenses/Apache-2.0 Apache License, Version 2.0 
+ * @license http://opensource.org/licenses/MIT MIT
  *  
  */
 /**
