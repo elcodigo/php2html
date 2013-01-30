@@ -834,6 +834,7 @@ class PHP2HTML{
         return $table;
     }
     /**
+     * Converts a database recordset in array
      * 
      * @param object $result
      * @return array
@@ -865,8 +866,10 @@ class PHP2HTML{
      * 
      * $p->Body($p->Combo($data));
      * </code>
+     * 
      * @param array $data
-     * @param boolean $selected
+     * @param bool $recordset
+     * @param string $selected
      * @param string $class
      * @param string $id
      * @param string $name
@@ -1042,7 +1045,7 @@ class PHP2HTML{
      * @param string $properties
      * @return string
      */
-    function Inp($type=BT, $value="", $clas="", $id="", $name="", $properites=""){
+    function Inp($type=BT, $value="", $class="", $id="", $name="", $properties=""){
         $inp = '<input type="'.$type.'"';
         $inp.= cClass($class);
         $inp.= id($id);
@@ -1487,14 +1490,14 @@ class PHP2HTML{
      * @return string
      */
     function requirements(){       
-        $msj= div_.span_.'Libraries'._span. _div.p_;       
+        $msj = div_.span_.'Libraries'._span. _div.p_;       
         $msj.= ul_;
-        $msj.=li_.(checkCurl() ? "The CURL extension is loaded":"The CURL extension is not loaded")._li;
-        $msj.=li_.(checkMySQL() ? "The MySQL extension is loaded":"The MySQL extension is loaded")._li;
-        $msj.=li_.(checkMySQLi() ? "The MySQLi extension is loaded":"The MySQLi extension is loaded")._li;
-        $msj.=li_.(checkMsSQL() ? "The MsSQL extension is loaded":"The MsSQL extension is loaded")._li;
-        $msj.=li_.(checkOracle() ? "The OCI8 extension is loaded":"The OCI8 extension is loaded")._li;                
-        $msj.=_ul._p;
+        $msj.= li_.(checkCurl() ? "The CURL extension is loaded":"The CURL extension is not loaded")._li;
+        $msj.= li_.(checkMySQL() ? "The MySQL extension is loaded":"The MySQL extension is loaded")._li;
+        $msj.= li_.(checkMySQLi() ? "The MySQLi extension is loaded":"The MySQLi extension is loaded")._li;
+        $msj.= li_.(checkMsSQL() ? "The MsSQL extension is loaded":"The MsSQL extension is loaded")._li;
+        $msj.= li_.(checkOracle() ? "The OCI8 extension is loaded":"The OCI8 extension is loaded")._li;                
+        $msj.= _ul._p;
         return $msj;
     }
 

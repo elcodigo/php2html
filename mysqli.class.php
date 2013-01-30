@@ -68,10 +68,11 @@ class mysqliConn extends SQLFunctions{
         return $this->user.'@'.$this->database.':'.$this->host;  
     }
     /**
-    * Returns an associative array with the following record
-    *
-    * @return mixed
-    */
+     * Returns an associative array with the following record
+     * 
+     * @param boolean $assoc
+     * @return mixed
+     */
     public function Fetch($assoc = true){
         if($assoc == true){
             $this->row = mysqli_fetch_assoc($this->rs);

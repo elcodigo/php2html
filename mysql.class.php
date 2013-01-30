@@ -76,16 +76,16 @@ class mysqlConn extends SQLFunctions{
          return $this->user.'@'.$this->database.':'.$this->host;  
      }
      /**
-    * Returns an associative array with the following record
+      * Returns an associative array with the following record
       * 
-    * @param boolean $assoc 
-    * @return mixed
-    */
+      * @param boolean $assoc
+      * @return mixed
+      */
      public function Fetch($assoc = true){
          if($assoc == true){
             $this->row = mysql_fetch_assoc($this->rs);
          }else{
-             $this->row = mysql_fetch_array($this->rs);
+            $this->row = mysql_fetch_array($this->rs);
          }
          return is_array($this->row);
      }
