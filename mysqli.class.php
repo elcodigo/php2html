@@ -36,7 +36,8 @@ class mysqliConn extends SQLFunctions{
      * @param $password string
      * @param $persistant boolean
      */
-    public function __construct($host =DB_HOST, $database = DB_DATABASE, $user = DB_USER, $password = DB_PASS, $persistant = DB_PERSIST) {
+    public function __construct($obj, $host =DB_HOST, $database = DB_DATABASE, $user = DB_USER, $password = DB_PASS, $persistant = DB_PERSIST) {
+        $this->HtmlC = $obj;
         $this->host = $host;
         $this->database = $database;
         $this->user = $user;
@@ -54,9 +55,12 @@ class mysqliConn extends SQLFunctions{
                 $this->conn = mysqli_connect('p:'.$this->host, $this->user, $this->password, $this->database);
             }else{
                 $this->conn = mysqli_connect($this->host, $this->user, $this->password, $this->database);        
-            }    
+            }
+            if(!$this->conn){                     
+                $this->HtmlC->display_error('mysqliConn:Conn()', mysqli_connect_error());
+            }
         }catch(Exception $e){
-            echo "Error: ". $e->getMessage();
+           $this->HtmlC->display_error('mysqliConn:Conn()',$e->getMessage());
         }
     }
     /**

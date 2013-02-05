@@ -39,7 +39,7 @@ class mssqlConn extends SQLFunctions{
             }
             mssql_select_db($this->database, $this->conn);
         }catch(Exception $e){
-            echo "Error: ". $e->getMessage();
+            $this->HtmlC->display_error('mssqlConn:Conn()',$e->getMessage());             
         }        
     }
     /**
@@ -105,13 +105,15 @@ class mssqlConn extends SQLFunctions{
     /**
      * Initialize the class
      * 
+     * @param $obj object
      * @param $host string
      * @param $database string
      * @param $user string
      * @param $password string
      * @param $persistant boolean
      */
-    public function __construct($host =DB_HOST, $database = DB_DATABASE, $user = DB_USER, $password = DB_PASS, $persistant = DB_PERSIST) {
+    public function __construct($obj, $host =DB_HOST, $database = DB_DATABASE, $user = DB_USER, $password = DB_PASS, $persistant = DB_PERSIST) {
+        $this->HtmlC = $obj; 
         $this->host = $host;
         $this->database = $database;
         $this->user = $user;

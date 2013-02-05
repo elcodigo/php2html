@@ -37,9 +37,12 @@ class oracleConn extends SQLFunctions{
             }else{
                 $this->conn = oci_connect($this->user, $this->password, $this->host.'/'.$this->database);
             }
-            //echo get_resource_type($this->conn);
+            if(!$this->conn){
+                $e = oci_error();
+                $this->HtmlC->display_error('oracleConn:Conn()', htmlentities($e['message']));
+            }
         }catch(Exception $e){
-            echo "Error: ". $e->getMessage();
+            $this->HtmlC->display_error('oracleConn:Conn()',$e->getMessage());
         }
     }
     /**
@@ -109,7 +112,8 @@ class oracleConn extends SQLFunctions{
      * @param $password string
      * @param $persistant boolean
      */
-    public function __construct($host =DB_HOST, $database = DB_DATABASE, $user = DB_USER, $password = DB_PASS, $persistant = DB_PERSIST) {
+    public function __construct($obj, $host =DB_HOST, $database = DB_DATABASE, $user = DB_USER, $password = DB_PASS, $persistant = DB_PERSIST) {
+        $this->HtmlC = $obj;
         $this->host = $host;
         $this->database = $database;
         $this->user = $user;

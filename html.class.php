@@ -11,10 +11,12 @@
  * @copyright Copyright (R) 2012, MANUEL GONZALEZ RIVERA <phptohtml@gmail.com>
  * @license http://opensource.org/licenses/MIT MIT
  */
+error_reporting(0);
 require_once 'html.def.php';
 require_once 'html.attributes.php';
 require_once 'html.attributes.ext.php';
 require_once 'html.actions.php';
+
 /**
  * Class for creating a web page using only PHP. 
  * It supports connections to MySQL, Oracle and SQL Server. 
@@ -178,19 +180,19 @@ class PHP2HTML{
         }elseif($this->connType=='mssql'){
             $this->Cnn = null;
             require_once 'mssql.class.php'; 
-            $this->Cnn = new mssqlConn($dbHost, $db_Database, $db_User, $db_Pass, $db_persist);            
+            $this->Cnn = new mssqlConn($this, $dbHost, $db_Database, $db_User, $db_Pass, $db_persist);            
         }elseif($this->connType=='mysql'){
             $this->Cnn = null;
             require_once 'mysql.class.php';            
-            $this->Cnn = new mysqlConn($dbHost, $db_Database, $db_User, $db_Pass, $db_persist);
+            $this->Cnn = new mysqlConn($this, $dbHost, $db_Database, $db_User, $db_Pass, $db_persist);
         }elseif($this->connType=='mysqli'){
             $this->Cnn = null;
             require_once 'mysqli.class.php';            
-            $this->Cnn = new mysqliConn($dbHost, $db_Database, $db_User, $db_Pass, $db_persist);            
+            $this->Cnn = new mysqliConn($this, $dbHost, $db_Database, $db_User, $db_Pass, $db_persist);            
         }elseif($this->connType=='oracle'){
             $this->Cnn = null;
             require_once 'oracle.class.php';
-            $this->Cnn = new oracleConn($dbHost, $db_Database, $db_User, $db_Pass, $db_persist);
+            $this->Cnn = new oracleConn($this, $dbHost, $db_Database, $db_User, $db_Pass, $db_persist);
         }else{
             $this->Cnn = null;
         }
@@ -1287,13 +1289,13 @@ class PHP2HTML{
      * @return string
      */
     function iFrame($src, $height, $width, $scrolling="auto", $name){        
-        $ifr = '<iframe';
-        $ifr.= ' src="'.$src.'"';
-        $ifr.= height($height);
-        $ifr.= width($width);        
-        $ifr.= name($name);
-        $ifr.= ' scrolling="'.$scrolling.'"';
-        $ifr.='>'._ifr;
+        $ifr = $this->iT(ifr_, 
+                src($src).
+                height($height).
+                width($width).
+                name($name).
+                ' scrolling="'.$scrolling.'"').
+                _ifr;                
         return $ifr;        
     }
     /**
@@ -1372,8 +1374,8 @@ class PHP2HTML{
      */
     function h($i=1, $value =""){
         if($i>6){
-            $description = "The value can not be higher than 6 for headers";
-            $this->display_error('html.class.php: Error in function h($i,$value)', $description);
+            $description = "The value \$i can not be higher than 6.".br_;            
+            $this->display_error('html.class.php::h($i, $value)', $description);
         }else{
             return "<h$i>$value</h$i>".BK;
         }
@@ -1383,11 +1385,16 @@ class PHP2HTML{
      * 
      * @param string $source
      * @param string $description
-     * @return string
      */
     function display_error($source="", $description = ""){
-        $this->Body($source.br_.$description);
-        return '';
+        $msj = $this->iT(p_, style('background:#fef1ec; color:#cd0a0a;'));
+        $msj.= $this->iT(span_, style('color:#333;font-weight:bold;'));
+        $msj.= "An error occurred in the function: "._span;   
+        $msj.= $this->iT(span_, style('font-weight:bold;')).$source._span. br_.$description;
+        $msj.= _p;
+        if($this->DevelopMode==TRUE){
+            $this->Body($msj);
+        }
     }
     
     /**
@@ -1474,7 +1481,7 @@ class PHP2HTML{
      * @return boolean
      */
     function checkMsSQL(){
-        return (extension_loaded('mssql') ? true : false);
+        return (extension_loaded('mssql') ? true : false);            
     }
     /**
      * Returns if the oracle extension is loaded
@@ -1493,12 +1500,13 @@ class PHP2HTML{
         $msj = div_.span_.'Libraries'._span. _div.p_;       
         $msj.= ul_;
         $msj.= li_.(checkCurl() ? "The CURL extension is loaded":"The CURL extension is not loaded")._li;
-        $msj.= li_.(checkMySQL() ? "The MySQL extension is loaded":"The MySQL extension is loaded")._li;
-        $msj.= li_.(checkMySQLi() ? "The MySQLi extension is loaded":"The MySQLi extension is loaded")._li;
-        $msj.= li_.(checkMsSQL() ? "The MsSQL extension is loaded":"The MsSQL extension is loaded")._li;
+        $msj.= li_.(checkMySQL() ? "The MySQL extension is loaded":"The MySQL extension is not loaded")._li;
+        $msj.= li_.(checkMySQLi() ? "The MySQLi extension is loaded":"The MySQLi extension is not loaded")._li;
+        $msj.= li_.(checkMsSQL() ? "The MsSQL extension is loaded":"The MsSQL extension is not loaded")._li;
         $msj.= li_.(checkOracle() ? "The OCI8 extension is loaded":"The OCI8 extension is loaded")._li;                
         $msj.= _ul._p;
         return $msj;
     }
+    
 
 ?>

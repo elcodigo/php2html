@@ -78,6 +78,11 @@ abstract class SQLFunctions {
      */
     protected $persistant;
     /**
+     *
+     * @var object
+     */
+    protected $HtmlC;
+    /**
      * Abstract class for handling connections
      * 
      * @param $host string
@@ -86,7 +91,7 @@ abstract class SQLFunctions {
      * @param $password string
      * @param $persistant boolean
      */
-    abstract public function __construct($host, $database, $user, $password, $persistant);
+    abstract public function __construct($obj, $host, $database, $user, $password, $persistant);
     /**
     * Try running a SQL query. If the parameter is empty, it takes the variable $this->sql
     *

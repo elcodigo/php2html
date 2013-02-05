@@ -36,19 +36,21 @@ class mysqlConn extends SQLFunctions{
     /**
      * Initialize the class
      * 
+     * @param $obj object
      * @param $host string
      * @param $database string
      * @param $user string
      * @param $password string
      * @param $persistant boolean
      */
-    public function __construct($host =DB_HOST, $database = DB_DATABASE, $user = DB_USER, $password = DB_PASS, $persistant = DB_PERSIST) {
-         $this->host = $host;
-         $this->database = $database;
-         $this->user = $user;
-         $this->password = $password;
-         $this->persistant = $persistant;
-         $this->Conn();
+    public function __construct($obj, $host =DB_HOST, $database = DB_DATABASE, $user = DB_USER, $password = DB_PASS, $persistant = DB_PERSIST) {
+        $this->HtmlC = $obj; 
+        $this->host = $host;
+        $this->database = $database;
+        $this->user = $user;
+        $this->password = $password;
+        $this->persistant = $persistant;
+        $this->Conn();
      }
      
      /**
@@ -56,15 +58,21 @@ class mysqlConn extends SQLFunctions{
      * 
      */
      protected function Conn() {
-        try{
+        try {
             if($this->persistant==true){
-                 $this->conn = mysql_pconnect($this->host, $this->user, $this->password);                 
-             }else{
-                 $this->conn = mysql_connect($this->host, $this->user, $this->password);
-            }    
-            mysql_select_db($this->database, $this->conn);
+                 $this->conn = mysql_pconnect($this->host, $this->user, $this->password);  
+             }else{                 
+                 $this->conn = mysql_connect($this->host, $this->user, $this->password);                 
+            }
+            if(!$this->conn){                     
+                $this->HtmlC->display_error('mysqlConn:Conn()', mysql_error());                     
+            }else{
+                if(!mysql_select_db($this->database, $this->conn)){
+                    $this->HtmlC->display_error('mysqlConn:Conn()', mysql_error());
+                }
+            }                
         }catch(Exception $e){
-           echo "Error: ". $e->getMessage();
+           $this->HtmlC->display_error('mysqlConn:Conn()',$e->getMessage());
         }
      }
      /**

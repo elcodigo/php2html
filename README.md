@@ -48,11 +48,37 @@ Example
           $p->Btn(
             "button", "Click Me", "myClass", "myID", "myName",
             actions::onClick(
-              "alert('Hello'); return false;"
+              'alert("Hello"); return false;'
             )
           )
 );
 $p->Create();
+```
+
+Database connections example
+====================
+```php
+    $p->setConnType("mysql");
+    $p->setConnection($dbHost, $db_User, $db_Pass, $db_Database);
+
+    //Running a SELECT statement
+    $p->Cnn->Query('Select code, name from myTable');
+
+    //The result of the query can be accessed via Cnn->rs method
+    If(!$p->Cnn->rs==false){
+      //The numRows() method returns the number of rows for a SELECT query 
+      $NumRows = $p->Cnn->numRows();
+      echo "The statement return $NumRows records";
+    }
+
+    //Running a Delete statement
+    $p->Cnn->Query('delete from myTable where code = 101');
+
+    if($p->Cnn->rs){
+      //Returns the number of affected rows on success
+      $NumRecords = $p->Cnn->affectedRows();
+     echo "The statement affect $NumRecords rows";
+    }
 ```
 Contact
 =======
@@ -63,4 +89,4 @@ phptohtml@gmail.com
 Homepage
 ====
 
-[php2html - http://www.php2html.comyr.com](http://www.php2html.comyr.com)
+[http://www.php2html.comyr.com](http://www.php2html.comyr.com)
