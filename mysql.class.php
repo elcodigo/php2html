@@ -58,22 +58,18 @@ class mysqlConn extends SQLFunctions{
      * 
      */
      protected function Conn() {
-        try {
-            if($this->persistant==true){
-                 $this->conn = mysql_pconnect($this->host, $this->user, $this->password);  
-             }else{                 
-                 $this->conn = mysql_connect($this->host, $this->user, $this->password);                 
-            }
-            if(!$this->conn){                     
-                $this->HtmlC->display_error('mysqlConn:Conn()', mysql_error());                     
-            }else{
-                if(!mysql_select_db($this->database, $this->conn)){
-                    $this->HtmlC->display_error('mysqlConn:Conn()', mysql_error());
-                }
-            }                
-        }catch(Exception $e){
-           $this->HtmlC->display_error('mysqlConn:Conn()',$e->getMessage());
+        if($this->persistant==true){
+             $this->conn = mysql_pconnect($this->host, $this->user, $this->password);  
+         }else{                 
+             $this->conn = mysql_connect($this->host, $this->user, $this->password);                 
         }
+        if(!$this->conn){                     
+            $this->HtmlC->display_error('mysqlConn:Conn()', mysql_error());
+        }else{
+            if(!mysql_select_db($this->database, $this->conn)){
+                $this->HtmlC->display_error('mysqlConn:Conn()', mysql_error());
+            }
+        }                
      }
      /**
      * Get the connection info

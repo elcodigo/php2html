@@ -39,10 +39,10 @@ class oracleConn extends SQLFunctions{
             }
             if(!$this->conn){
                 $e = oci_error();
-                $this->HtmlC->display_error('oracleConn:Conn()', htmlentities($e['message']));
+                $this->HtmlC->display_error('oracleConn::Conn()', htmlentities($e['message']));
             }
         }catch(Exception $e){
-            $this->HtmlC->display_error('oracleConn:Conn()',$e->getMessage());
+            $this->HtmlC->display_error('oracleConn::Conn()',$e->getMessage());
         }
     }
     /**
@@ -54,8 +54,10 @@ class oracleConn extends SQLFunctions{
             oci_close($this->conn);            
         }else{                       
             if($type!='Unknown'){
-                //
-            }
+                $this->HtmlC->display_error('oracleConn::Close()','The active connection is not an Oracle connection. Resource Type: '.$type);
+            }else{
+                $this->HtmlC->display_error('oracleConn::Close()','The active connection is an unknow resource type: '.$type);
+            }            
         }
     }
     /**
@@ -72,13 +74,18 @@ class oracleConn extends SQLFunctions{
      * @param boolean $assoc
      * @return mixed
      */
-    public function Fetch($assoc = true) {
-        if($assoc==true){
-            $this->row = oci_fetch_assoc($this->rs);
-        }else{
-            $this->row = oci_fetch_array($this->rs);
+    public function Fetch($assoc = true){
+        try{
+            if($assoc==true){
+                $this->row = oci_fetch_assoc($this->rs);
+            }else{
+                $this->row = oci_fetch_array($this->rs);
+            }
+            return is_array($this->row);    
+        }catch(Exception $error){
+            $e = oci_error();
+            $this->HtmlC->display_error('oracleConn::Fetch()', htmlentities($e['message']));
         }
-        return is_array($this->row);
     }
     /**
     * Try running a SQL query. If the parameter is empty, it takes the variable $this->sql
@@ -86,11 +93,16 @@ class oracleConn extends SQLFunctions{
     * @param string $sql Sql Query
     */
     public function Query($sql = ''){
-        if(is_resource($this->rs)) {
-            oci_free_statement($this->rs);            
-        }
-        $this->sql = ($sql=="" ? $this->sql : $sql);
-        $this->rs = oci_parse($this->conn, $this->sql);
+        try{
+            if(is_resource($this->rs)) {
+                oci_free_statement($this->rs);            
+            }
+            $this->sql = ($sql == "" ? $this->sql : $sql);
+            $this->rs = oci_parse($this->conn, $this->sql);
+        }catch(Exception $error){
+            $e = oci_error();
+            $this->HtmlC->display_error('oracleConn::Query()', htmlentities($e['message']));
+        }     
     }
     /**
     * Move the pointer to the index consultation indicated
@@ -101,6 +113,7 @@ class oracleConn extends SQLFunctions{
     * @return boolean false
     */
     public function Seek($num = 0) {
+        $this->HtmlC->display_error('oracleConn::Seek()', 'The seek function is not available at Oracle connections');
         return false;
     }
     /**
@@ -151,6 +164,7 @@ class oracleConn extends SQLFunctions{
     * @return int 0
     */
     public function getInsertedId() {
+        $this->HtmlC->display_error('oracleConn::getInsertedId()', 'The getInsertedId function is not available at Oracle connections');
         return 0;
     }
     /**
@@ -172,6 +186,7 @@ class oracleConn extends SQLFunctions{
     * @return int    
     */
     public function numRows() {
+        $this->HtmlC->display_error('oracleConn::numRows()', 'The numRows function is not available at Oracle connections');
         return 0;
     }
 }

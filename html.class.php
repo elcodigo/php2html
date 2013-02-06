@@ -11,11 +11,17 @@
  * @copyright Copyright (R) 2012, MANUEL GONZALEZ RIVERA <phptohtml@gmail.com>
  * @license http://opensource.org/licenses/MIT MIT
  */
+ini_set( 'display_errors', 1 );
 error_reporting(0);
+
+set_exception_handler('captureException');
+register_shutdown_function('captureShutdown');
+
 require_once 'html.def.php';
 require_once 'html.attributes.php';
 require_once 'html.attributes.ext.php';
 require_once 'html.actions.php';
+
 
 /**
  * Class for creating a web page using only PHP. 
@@ -31,6 +37,7 @@ require_once 'html.actions.php';
  * @license http://opensource.org/licenses/MIT MIT
  */
 class PHP2HTML{
+    
     /**
      * Determines whether the class is in development mode.
      * This allows you to show or hide the errors.
@@ -103,7 +110,8 @@ class PHP2HTML{
      * Time when the class starts
      * @var time 
      */
-    private $start;   
+    private $start;  
+   
     /**
      * The time that the class is started.
      */
@@ -130,18 +138,20 @@ class PHP2HTML{
      * @param boolean $mode
      */    
     function __construct($mode=DEVELOP){ 
+        set_error_handler(array( $this, 'handleBasicError' ));                  
         $this->Start();
         $this->DevelopMode = $mode;
         $this->docType(DOC_TYPE);
         $this->Set_Meta();        
-        $this->setConnType();        
-    }
+        $this->setConnType();
+    }    
     /**
      * Ends the connection associated to class     
      */
     function __destruct() {
         $this->letConnection();
         $this->Ends();
+              
     }
     /**     
      * Set the database connection used in the class.
@@ -1374,7 +1384,7 @@ class PHP2HTML{
      */
     function h($i=1, $value =""){
         if($i>6){
-            $description = "The value \$i can not be higher than 6.".br_;            
+            $description = "The value \$i can not be higher than 6.";            
             $this->display_error('html.class.php::h($i, $value)', $description);
         }else{
             return "<h$i>$value</h$i>".BK;
@@ -1389,13 +1399,13 @@ class PHP2HTML{
     function display_error($source="", $description = ""){
         $msj = $this->iT(p_, style('background:#fef1ec; color:#cd0a0a;'));
         $msj.= $this->iT(span_, style('color:#333;font-weight:bold;'));
-        $msj.= "An error occurred in the function: "._span;   
-        $msj.= $this->iT(span_, style('font-weight:bold;')).$source._span. br_.$description;
+        $msj.= "An error occurred: "._span;   
+        $msj.= $this->iT(span_, style('font-weight:bold;')).$source._span. br_. htmlentities($description);
         $msj.= _p;
         if($this->DevelopMode==TRUE){
             $this->Body($msj);
         }
-    }
+    }    
     
     /**
      * Create de Page with the user defined contents
@@ -1447,9 +1457,18 @@ class PHP2HTML{
         $result = ($this->head_scr=='' ? $result : str_replace('</head>','<script type="text/javascript">'.$this->head_scr.BK."</script>".BK."</head>".BK, $result));
         $result = ($this->body_doc=='' ? $result : str_replace('</body>',$this->body_doc.BK."</body>".BK, $result));        
         print $result;
+        restore_error_handler();  
     }
+
+    
+    function handleBasicError($code, $message, $file, $line) {    
+        $this->display_error("PHP2HTML", $message);
+    }
+    
+    
 }
 /*End of the class*/
+    
 
     /**
      * Returns if the curl extension is loaded
@@ -1507,6 +1526,49 @@ class PHP2HTML{
         $msj.= _ul._p;
         return $msj;
     }
+      
+ 
+        
     
-
+    function captureNormal($code, $message, $file, $line) {    
+        echo '<p style="background:#fef1ec; color:#cd0a0a;">
+        <span style="color:#333; font-weight:bold;">An error occurred:</span>
+        '.htmlentities($message).'</p>';
+    }
+    
+    set_error_handler('captureNormal');   
+    
+    function captureException($exception){
+        
+        echo '<p style="background:#fef1ec; color:#cd0a0a;">
+        <span style="color:#333; font-weight:bold;">An error occurred:</span>
+        <span style="font-weight:bold;">PHP2HMTL</span></p>
+        <pre style="background:#fef1ec; color:#cd0a0a;">';        
+        echo $exception;        
+        echo br_.strong_."Script Execution stoped"._strong; 
+        echo '</pre>';
+        
+    }
+    
+    // UNCATCHABLE ERRORS
+    
+    function captureShutdown( ){
+        $error = error_get_last( );
+        if($error) {
+            //IF YOU WANT TO CLEAR ALL BUFFER, UNCOMMENT NEXT LINE:
+            //ob_end_clean( );            
+            // Display content $error variable
+            echo '<p style="background:#fef1ec; color:#cd0a0a;">
+            <span style="color:#333; font-weight:bold;">An error occurred:</span>
+            <span style="font-weight:bold;">PHP2HMTL</span></p>
+            <pre style="background:#fef1ec; color:#cd0a0a;">';        
+            //echo $error['message'];        
+            print_r($error);
+            echo br_.strong_."Script Execution stoped"._strong; 
+            echo _pre;
+        }else{ 
+            return true;            
+        }
+    }
+    
 ?>
