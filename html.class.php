@@ -1535,17 +1535,17 @@ class PHP2HTML{
         <span style="color:#333; font-weight:bold;">An error occurred:</span>
         '.htmlentities($message).'</p>';
     }
-    
-    set_error_handler('captureNormal');   
-    
+
+    set_error_handler('captureNormal');
+
     function captureException($exception){
         
         echo '<p style="background:#fef1ec; color:#cd0a0a;">
-        <span style="color:#333; font-weight:bold;">An error occurred:</span>
+        <span style="color:#333; font-weight:bold;">An Exception occurred:</span>
         <span style="font-weight:bold;">PHP2HMTL</span></p>
-        <pre style="background:#fef1ec; color:#cd0a0a;">';        
-        echo $exception;        
-        echo br_.strong_."Script Execution stoped"._strong; 
+        <pre style="background:#fef1ec; color:#cd0a0a;">';
+	echo 'A Exception returns "' . $exception->getMessage().'"';
+        echo br_.strong_."Script Execution stopped at line ". $exception->getLine()._strong; 
         echo '</pre>';
         
     }
@@ -1559,12 +1559,12 @@ class PHP2HTML{
             //ob_end_clean( );            
             // Display content $error variable
             echo '<p style="background:#fef1ec; color:#cd0a0a;">
-            <span style="color:#333; font-weight:bold;">An error occurred:</span>
+            <span style="color:#333; font-weight:bold;">An Fatal Error occurred:</span>
             <span style="font-weight:bold;">PHP2HMTL</span></p>
             <pre style="background:#fef1ec; color:#cd0a0a;">';        
-            //echo $error['message'];        
-            print_r($error);
-            echo br_.strong_."Script Execution stoped"._strong; 
+            echo $error['message'];
+            //print_r($error);
+            echo br_.strong_."Script Execution stopped at line ". $error['line']._strong; 
             echo _pre;
         }else{ 
             return true;            
